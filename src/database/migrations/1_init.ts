@@ -8,19 +8,20 @@ export async function up(db: Kysely<any>): Promise<void> {
 
   await db.schema
     .createTable('portfolio_item')
-    .addColumn('symbol', 'varchar', (col) => col.primaryKey())
-    .addColumn('name', 'varchar', (col) => col.notNull())
+    .addColumn('symbol', 'varchar', (col) => col.references('cryptocurrency.symbol').notNull())
     .addColumn('avgPrice', 'decimal', (col) => col.notNull())
     .addColumn('share', 'decimal', (col) => col.notNull())
     .addColumn('rank', 'integer', (col) => col.notNull())
-    .addColumn('portfolioName', 'varchar', (col) => col.references('portfolio.name').notNull())
+    .addColumn('portfolioName', 'varchar', (col) => col.references('external.name').notNull())
     .addColumn('amount', 'decimal', (col) => col.notNull())
     .addColumn('profit', 'decimal', (col) => col.notNull())
+    .addColumn('changeInShare', 'decimal', (c) => c.defaultTo(0).notNull())
     .execute()
 
   await db.schema
-    .createTable('coin_price')
+    .createTable('cryptocurrency')
     .addColumn('symbol', 'varchar', (col) => col.primaryKey())
+    .addColumn('name', 'varchar', (col) => col.notNull())
     .addColumn('price', 'decimal', (col) => col.notNull())
     .execute()
 
@@ -30,7 +31,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('symbol', 'varchar', (col) => col.notNull())
     .addColumn('price', 'decimal', (col) => col.notNull())
     .addColumn('amount', 'decimal', (col) => col.notNull())
-    .addColumn('created_at', 'timestamp', (col) => col.defaultTo(sql`now()`))
+    .addColumn('createdAt', 'timestamp', (col) => col.defaultTo(sql`now()`))
+    .addColumn('portfolioName', 'varchar', (col) => col.references('external.name').notNull())
     .execute()
 
   await db.schema
@@ -68,4 +70,9 @@ export async function down(db: Kysely<any>): Promise<void> {
   await db.schema.dropTable('coin_price').execute()
   await db.schema.dropTable('transaction').execute()
   await db.schema.dropTable('profit').execute()
+  await db.schema.dropIndex('portfolio_item_symbol_index').execute()
+  await db.schema.dropIndex('portfolio_item_portfolio_name_index').execute()
+  await db.schema.dropIndex('transaction_symbol_index').execute()
+  await db.schema.dropIndex('transaction_id_index').execute()
+  await db.schema.dropIndex('profit_symbol_index').execute()
 }

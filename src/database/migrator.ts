@@ -13,10 +13,8 @@ const customPath: FileMigrationProviderPath = {
   },
 }
 
-export async function migrateToLatest(db: Kysely<Database>) {
+export async function migrate(db: Kysely<Database>, dir: 'up' | 'down' = 'up') {
   const migrationFolder = path.join('.', 'build', 'database', 'migrations')
-
-  logger.info(`Migrating to latest version from ${migrationFolder}`)
 
   const migrator = new Migrator({
     db,
@@ -27,7 +25,8 @@ export async function migrateToLatest(db: Kysely<Database>) {
     }),
   })
 
-  const { error, results } = await migrator.migrateToLatest()
+  const { error, results } =
+    dir == 'up' ? await migrator.migrateToLatest() : await migrator.migrateDown()
 
   results?.forEach((it) => {
     if (it.status === 'Success') {

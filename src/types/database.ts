@@ -1,10 +1,11 @@
 import { Generated, Insertable, Selectable, Updateable } from 'kysely'
 
 export interface Database {
-  portfolioItem: PortfolioItemTable
-  coinPrice: CoinPriceTable
+  portfolio_item: PortfolioItemTable
+  cryptocurrency: CryptoCurrencyTable
   transaction: TransactionTable
   portfolio: PortfolioTable
+  profit: ProfitTable
 }
 
 export interface PortfolioTable {
@@ -12,35 +13,35 @@ export interface PortfolioTable {
 }
 
 export interface PortfolioItemTable {
-  rank: number
-  name: string
   symbol: string
   avgPrice: number
   share: number
-  portfolioId: number
+  profit: number
+  portfolioName: string
   amount: number
-  created_at: Date
+  changeInShare: number
 }
 
 export type Portfolio = Selectable<PortfolioItemTable>
 export type NewPortfolio = Insertable<PortfolioItemTable>
 export type PortfolioUpdate = Updateable<PortfolioItemTable>
 
-export interface CoinPriceTable {
+export interface CryptoCurrencyTable {
   symbol: string
+  name: string
   price: number
 }
 
-export type CoinPrice = Selectable<CoinPriceTable>
-export type NewCoinPrice = Insertable<CoinPriceTable>
-export type CoinPriceUpdate = Updateable<CoinPriceTable>
+export type CryptoCurrency = Selectable<CryptoCurrencyTable>
+export type NewCryptoCurrency = Insertable<CryptoCurrencyTable>
+export type CryptoCurrencyUpdate = Updateable<CryptoCurrencyTable>
 
 export interface TransactionTable {
   id: Generated<number>
   symbol: string
   amount: number
   price: number
-  created_at: Date
+  createdAt: Date
 }
 
 export type Transaction = Selectable<TransactionTable>
@@ -51,6 +52,7 @@ export interface ProfitTable {
   id: Generated<number>
   date: Date
   profit: number
+  portfolioName: string
 }
 
 export type Profit = Selectable<TransactionTable>

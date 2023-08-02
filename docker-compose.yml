@@ -6,11 +6,11 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - cryptohub_pg_data:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=cryptohub
 
 volumes:
-  cryptohub_pg_data:
+  pg_data:
